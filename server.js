@@ -31,6 +31,8 @@ app.get('/scrape', function (req, res) {
         }
       });
 
+      // links = ['http://www.upenn.edu/almanac/volumes/v60/n33/creport.html'];
+
       links.forEach(function (link) {
         request(link, function (err, res, html) {
           if (!err) {
@@ -49,13 +51,19 @@ app.get('/scrape', function (req, res) {
               $(e).each(function(j, x) {
                 var date, time, loc, type;
                 var json = { date : "", time : "", loc : "", type : "" };
-                json.date = $(x).children().first().find('span').text();
-                if (json.date.length === 0) {
-                  console.log(i, link);
+
+                if ($(x).children().first().find('span').length != '0') {
+                  json.date = $(x).children().first().find('span').text();
+                  json.time = $(x).children().next().first().find('span').text();
+                  json.loc  = $(x).children().next().next().first().find('span').text();
+                  json.type = $(x).children().next().next().next().first().find('span').text();
+                } else {
+                  json.date = $(x).children().first().text();
+                  json.time = $(x).children().next().first().text();
+                  json.loc  = $(x).children().next().next().first().text();
+                  json.type = $(x).children().next().next().next().first().text();
                 }
-                json.time = $(x).children().next().first().find('span').text();
-                json.loc  = $(x).children().next().next().first().find('span').text();
-                json.type = $(x).children().next().next().next().first().find('span').text();
+
                 self.crimes.push(json);
               });
             });
