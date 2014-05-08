@@ -8,10 +8,19 @@ var app = express();
 app.get('/scrape', function (req, res) {
   // 'use strict';
 
+  var API_KEY = 'AIzaSyCYJB2oSbvvBTLH2_Zuhpyw_lL0XzuYABw';
+  var geocode = 'https://maps.googleapis.com/maps/api/geocode/json?';
+  var southwest = '39.948907,-75.249186';
+  var northeast = '39.966538,-75.163356';
+  var bounds = southwest + '|' + northeast;
+
   var url = 'http://www.upenn.edu/almanac/crimes-index.html';
   var self = this;
   self.check = true;
   self.crimes = [];
+  self.geocode = geocode + 'sensor=false' +
+                 '&bounds=' + bounds +
+                 '&key=' + API_KEY;
 
   request(url, function (err, resp, html) {
     if (!err) {
@@ -54,8 +63,9 @@ app.get('/scrape', function (req, res) {
               }
             });
 
-            var date, time, loc, type;
-            var json = { date : "", time : "", loc : "", type : "" };
+            var date, time, loc, type, lat, lng;
+            var json = { date : "", time : "", loc : "",
+                         type : "" , lat : "", lng : "" };
 
             $(kids).each(function (i, e) {
               $(e).each(function(j, x) {
@@ -72,14 +82,31 @@ app.get('/scrape', function (req, res) {
                   json.type = $(x).children().next().next().next().first().text();
                 }
 
-                self.crimes.push(json);
-                // console.log(self.crimes.length);
+                getLatLng(json);
+                // self.crimes.push(getLatLng(json));
               });
             });
           }
 
           finished();
         });
+      });
+    }
+
+    function getLatLng(json) {
+      request(self.geocode + '&address=' + json.loc, function (err_, response, body) {
+        if (!err_) {
+          console.log(json);
+          jsonObj = JSON.parse(body);
+          if (jsonObj['results'][0] !== undefined) {
+            var lat = jsonObj['results'][0]['geometry']['location']['lat'];
+            var lng = jsonObj['results'][0]['geometry']['location']['lng'];
+            json.lat = lat;
+            json.lng = lng;
+            // console.log(json);
+            self.crimes.push(json);
+          }
+        }
       });
     }
 
@@ -91,9 +118,9 @@ app.get('/scrape', function (req, res) {
           console.log('aw man');
         }
       });
-
       res.send('check for output.json in your directory!');
     }
+
   });
 });
 
