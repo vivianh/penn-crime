@@ -22,12 +22,26 @@
         mapTypeId: google.maps.MapTypeId.TERRAIN,
       });
 
-      /*
       d3.json("crime.json", function(data) {
         var overlay = new google.maps.OverlayView();
+
+        overlay.onAdd = function() {
+          var layer = d3.select(this.getPanes().overlayLayer).append("div")
+              .attr("class", "crimes");
+
+          /*
+          overlay.draw = function() {
+            var projection = this.getProjection(),
+                padding = 10;
+
+            var marker = layer.selectAll("svg")
+                .data(d3.entries(data))
+                .each(transform)
+          }
+          */
+        }
         overlay.setMap(map);
       });
-      */
 
       /*
       var w = 960;
