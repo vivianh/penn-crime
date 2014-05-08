@@ -8,7 +8,8 @@ var app = express();
 app.get('/scrape', function (req, res) {
   // 'use strict';
 
-  var API_KEY = 'AIzaSyCYJB2oSbvvBTLH2_Zuhpyw_lL0XzuYABw';
+  // var API_KEY = 'AIzaSyCYJB2oSbvvBTLH2_Zuhpyw_lL0XzuYABw';
+  var API_KEY = 'AIzaSyCF4uUEdJnUyh8JMHqZ7VBhv-P3jLnT6IE';
   var geocode = 'https://maps.googleapis.com/maps/api/geocode/json?';
   var southwest = '39.948907,-75.249186';
   var northeast = '39.966538,-75.163356';
@@ -18,6 +19,7 @@ app.get('/scrape', function (req, res) {
   var self = this;
   self.check = true;
   self.crimes = [];
+  self.crimesLatLng = [];
   self.geocode = geocode + 'sensor=false' +
                  '&bounds=' + bounds +
                  '&key=' + API_KEY;
@@ -43,14 +45,17 @@ app.get('/scrape', function (req, res) {
         }
       });
 
-      // links = ['http://www.upenn.edu/almanac/volumes/v60/n33/creport.html'];
-
-      var finished = _.after(links.length, writeToFile);
+      // var finished = _.after(links.length, writeToFile);
+      var finishedScraping = _.after(links.length, function() {
+        self.finishedGeocoding = _.after(self.crimes.length, function () {
+          // console.log(self.crimesLatLng.length);
+          writeToFile();
+        });
+        getLatLng();
+      });
 
       links.forEach(function (_link) {
         request(_link, function (_err, _res, _html) {
-          // console.log(_link);
-          // console.log('err', _err);
           if (!_err) {
 
             var kids = [];
@@ -63,12 +68,12 @@ app.get('/scrape', function (req, res) {
               }
             });
 
-            var date, time, loc, type, lat, lng;
-            var json = { date : "", time : "", loc : "",
-                         type : "" , lat : "", lng : "" };
-
             $(kids).each(function (i, e) {
               $(e).each(function(j, x) {
+
+                var date, time, loc, type, lat, lng;
+                var json = { date : "", time : "", loc : "",
+                             type : "" , lat : "", lng : "" };
 
                 if ($(x).children().first().find('span').length != '0') {
                   json.date = $(x).children().first().find('span').text();
@@ -82,36 +87,37 @@ app.get('/scrape', function (req, res) {
                   json.type = $(x).children().next().next().next().first().text();
                 }
 
-                getLatLng(json);
-                // self.crimes.push(getLatLng(json));
+                self.crimes.push(json);
               });
             });
           }
 
-          finished();
+          finishedScraping();
         });
       });
     }
 
-    function getLatLng(json) {
-      request(self.geocode + '&address=' + json.loc, function (err_, response, body) {
-        if (!err_) {
-          console.log(json);
-          jsonObj = JSON.parse(body);
-          if (jsonObj['results'][0] !== undefined) {
-            var lat = jsonObj['results'][0]['geometry']['location']['lat'];
-            var lng = jsonObj['results'][0]['geometry']['location']['lng'];
-            json.lat = lat;
-            json.lng = lng;
-            // console.log(json);
-            self.crimes.push(json);
+    function getLatLng() {
+      self.crimes.forEach(function(_json) {
+        request(self.geocode + '&address=' + _json.loc, function (err_, response, body) {
+          if (!err_) {
+            jsonObj = JSON.parse(body);
+            if (jsonObj['results'][0] !== undefined) {
+              var lat = jsonObj['results'][0]['geometry']['location']['lat'];
+              var lng = jsonObj['results'][0]['geometry']['location']['lng'];
+              _json.lat = lat;
+              _json.lng = lng;
+              self.crimesLatLng.push(_json);
+            }
           }
-        }
+
+          self.finishedGeocoding();
+        });
       });
     }
 
     function writeToFile() {
-      fs.writeFile('output.json', JSON.stringify(self.crimes, null, 4), function (err_) {
+      fs.writeFile('output.json', JSON.stringify(self.crimesLatLng, null, 4), function (err_) {
         if (!err_) {
           console.log('file written successfully!');
         } else {
