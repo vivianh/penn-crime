@@ -4,14 +4,12 @@ var request = require('request');
 var cheerio = require('cheerio');
 var app = express();
 
-app.get('/scrape', function(req, res) {
+app.get('/scrape/:week', function (req, res) {
 
   url = 'http://www.upenn.edu/almanac/volumes/v60/n01/creport.html'
-  // url = 'http://www.upenn.edu/almanac/crimes-index.html'
 
-  request(url, function(err, res, html) {
+  request(url, function (err, res, html) {
     if (!err) {
-
       $ = cheerio.load(html);
       
       var kids = []
@@ -39,6 +37,35 @@ app.get('/scrape', function(req, res) {
     }
   });
 
+});
+
+app.get('/scrape', function (req, res) {
+  url = 'http://www.upenn.edu/almanac/crimes-index.html'
+
+  request(url, function (err, res, html) {
+    if (!err) {
+      $ = cheerio.load(html);
+
+      var links = [];
+      $('table[border=0]').each(function (i, e) {
+        if ($(e).get('0').attribs.cellpadding === '10') {
+          var anchors = $(e).find('a');
+          $(anchors).each(function(j, x) {
+            // console.log($(x).attr('href'));
+            var link = $(x).attr('href');
+            if (link.substring(0, 4) !== 'http') {
+              link = 'http://www.upenn.edu/almanac/'.concat(link);
+            }
+            links.push(link);
+          });
+        }
+      });
+
+      links.forEach(function (link) {
+      });
+    }
+  });
+  
 });
 
 app.listen('3000');
