@@ -36,6 +36,7 @@ var app = {
   'renderType' : function (type) {
 
     d3.json("output.json", function(data) {
+      console.log(data);
 
       // filtering 
       if (type !== undefined) {

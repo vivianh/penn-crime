@@ -13,6 +13,7 @@ html, body, #map {
     width: 15%;
     height: 100%;
     float: right;
+    background: #e74c3c;
 }
 
 .crimes, .crimes svg {
@@ -40,4 +41,9 @@ html, body, #map {
     padding: 5px 10px;
     text-align: right;
     line-height: 1.5;
+    color: white;
+}
+
+.info a {
+    color: #f1c40f;
 }
