@@ -78,7 +78,7 @@ var app = {
               .remove();
 
           marker.append("svg:circle")
-              .attr("r", 3)
+              .attr("r", 3.5)
               .attr("cx", padding)
               .attr("cy", padding);
 
