@@ -14,12 +14,14 @@ var app = {
 
   'setViewTheft' : function ($button) {
     $button.click(function () {
+      console.log('render theft');
       app.renderType('Theft');
     });
   },
 
   'setViewAssault' : function ($button) {
     $button.click(function () {
+      console.log('render assault');
       app.renderType('Assault');
     });
   },
@@ -35,6 +37,7 @@ var app = {
   },
 
   'renderType' : function (type) {
+
     d3.json("output.json", function(data) {
 
       // filtering 
@@ -45,23 +48,24 @@ var app = {
       }
 
       var overlay = new google.maps.OverlayView();
-
       overlay.onAdd = function() {
-        var layer = d3.select(this.getPanes().overlayMouseTarget).append("div")
+        // var layer = d3.select(this.getPanes().overlayMouseTarget).append("div")
+        var layer = d3.select(this.getPanes().overlayLayer).append("div")
             .attr("class", "crimes");
 
         overlay.draw = function() {
           var projection = this.getProjection(),
               padding = 10;
 
+          d3.selectAll("svg").remove();
+
           var marker = layer.selectAll("svg")
               // .data(d3.entries(data))
               .data(data, function (d) {
-                  return d.date + ',' + d.time
-                })
-              .each(transform);
-
-          console.log(marker);
+                // console.log(d.date + ',' + d.time);
+                return d.date + ',' + d.time
+              });
+              // .each(transform);
 
           marker.enter()
               .append("svg:svg")
