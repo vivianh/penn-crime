@@ -3,33 +3,30 @@ var app = {
   'init' : function () {
     app.$navBar = $('#navBar');
 
-    app.$viewTheft       = $('.viewTheft');
-    app.$viewAssault     = $('.viewAssault');
-
-    app.setViewTheft(app.$viewTheft);
-    app.setViewAssault(app.$viewAssault);
+    app.types.forEach(function (type) {
+      var $button = $('.view' + type);
+      $button.click(function () {
+        app.renderType(type);
+      });
+    });
 
     app.renderMap();
   },
 
-  'setViewTheft' : function ($button) {
-    $button.click(function () {
-      console.log('render theft');
-      app.renderType('Theft');
-    });
-  },
+  'types' : [
+    'Theft', 'Assault', 'Robbery', 'Rape',
+    'Fraud', 'Burglary', 'Aggravated Assault',
+    'Homicide', 'Drunkenness', 'Disorderly Conduct',
+    'Vandalism', 'Harassment',
+  ],
 
-  'setViewAssault' : function ($button) {
-    $button.click(function () {
-      console.log('render assault');
-      app.renderType('Assault');
-    });
-  },
+  // DUI, Liquor Law, Other Offense, Traffic, Sex Offense
 
   'renderMap' : function () {
     app.map = new google.maps.Map(d3.select("#map").node(), {
       zoom: 15,
-      center: new google.maps.LatLng(39.951788, -75.191719),
+      // center: new google.maps.LatLng(39.951788, -75.191719),
+      center: new google.maps.LatLng(39.954499, -75.204898),
       mapTypeId: google.maps.MapTypeId.TERRAIN,
     });
 
