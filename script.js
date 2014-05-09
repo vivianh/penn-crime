@@ -1,16 +1,26 @@
 var app = {
+
   'init' : function () {
     app.$navBar = $('#navBar');
-    app.$viewByType = $('.viewByType');
-    // console.log(app.$viewByType);
-    app.setViewTheft(app.$viewByType);
+
+    app.$viewTheft       = $('.viewTheft');
+    app.$viewAssault     = $('.viewAssault');
+
+    app.setViewTheft(app.$viewTheft);
+    app.setViewAssault(app.$viewAssault);
+
     app.renderMap();
   },
 
   'setViewTheft' : function ($button) {
     $button.click(function () {
-      // console.log('clicking button!');
       app.renderType('Theft');
+    });
+  },
+
+  'setViewAssault' : function ($button) {
+    $button.click(function () {
+      app.renderType('Assault');
     });
   },
 
@@ -20,17 +30,17 @@ var app = {
       center: new google.maps.LatLng(39.951788, -75.191719),
       mapTypeId: google.maps.MapTypeId.TERRAIN,
     });
+
     app.renderType();
   },
 
   'renderType' : function (type) {
     d3.json("output.json", function(data) {
 
-      console.log('type', type);
+      // filtering 
       if (type !== undefined) {
-        // filtering 
-        var data = data.filter(function (d) {
-          return d.type.trim() === type;
+        data = data.filter(function (d) {
+          return d.type.trim().indexOf(type) > -1;
         });
       }
 
@@ -45,15 +55,26 @@ var app = {
               padding = 10;
 
           var marker = layer.selectAll("svg")
-              .data(d3.entries(data))
-              .each(transform)
-              .enter()
+              // .data(d3.entries(data))
+              .data(data, function (d) {
+                  return d.date + ',' + d.time
+                })
+              .each(transform);
+
+          console.log(marker);
+
+          marker.enter()
               .append("svg:svg")
               .each(transform)
-              .attr("class", "marker")
+              .attr("class", "marker");
+              /*
               .on("click", function (d) {
                   console.log(d.value.type);
                 });
+              */
+          
+          marker.exit()
+              .remove();
 
           marker.append("svg:circle")
               .attr("r", 3)
@@ -61,7 +82,7 @@ var app = {
               .attr("cy", padding);
 
           function transform(d) {
-            d = new google.maps.LatLng(d.value.lat, d.value.lng);
+            d = new google.maps.LatLng(d.lat, d.lng);
             d = projection.fromLatLngToDivPixel(d);
             return d3.select(this)
                 .style("left", (d.x - padding) + "px")
@@ -69,7 +90,7 @@ var app = {
           };
         };
       };
-      console.log(typeof overlay);
+
       overlay.setMap(app.map);
     });
   }
