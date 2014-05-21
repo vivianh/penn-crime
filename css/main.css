@@ -13,8 +13,8 @@ html, body, #map {
     width: 15%;
     height: 100%;
     float: right;
-    /* background: #e74c3c; */
-    background: #3498db;
+    background: #e74c3c;
+    /* background: #3498db; */
 }
 
 .crimes, .crimes svg {
