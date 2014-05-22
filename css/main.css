@@ -13,7 +13,7 @@ html, body, #map {
     width: 15%;
     height: 100%;
     float: right;
-    background: #e74c3c;
+    /* background: #e74c3c; */
     /* background: #3498db; */
 }
 
@@ -48,4 +48,8 @@ html, body, #map {
 .info a {
     /* color: #f1c40f; */
     color: #34495e;
+}
+
+.filter {
+    padding: 10px;
 }

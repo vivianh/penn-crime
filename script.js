@@ -2,6 +2,7 @@ var app = {
 
   'init' : function () {
     app.$navBar = $('#navBar');
+    app.generateNavBar('yo');
 
     app.types.forEach(function (type) {
       var $button = $('.view' + type);
@@ -25,6 +26,42 @@ var app = {
   ],
 
   // DUI, Liquor Law, Other Offense, Traffic, Sex Offense
+
+  'generateNavBar' : function (type) {
+    app.$navItem = $('<div>')
+      .attr('class', 'filter');
+
+    app.$itemLabel = $('<label>')
+      .attr('class', 'checkbox')
+      .attr('for', 'checkbox-' + type)
+      .text(type);
+
+    /*
+    app.$icons = $('<span>')
+      .attr('class', 'icons');
+
+    app.$firstIcon = $('<span>')
+      .attr('class', 'first-icon')
+      .attr('class', 'fui-checkbox-unchecked')
+      .appendTo(app.$icons);
+
+    app.$secondIcon = $('<span>')
+      .attr('class', 'second-icon')
+      .attr('class', 'fui-checkbox-checked')
+      .appendTo(app.$icons);
+
+    app.$icons.appendTo(app.$itemLabel);
+    */
+
+    app.$inputItem = $('<input>')
+      .attr('type', 'checkbox')
+      .attr('id', 'checkbox-' + type)
+      .attr('data-toggle', 'checkbox')
+      .appendTo(app.$itemLabel);
+
+    app.$itemLabel.appendTo(app.$navItem);
+    app.$navItem.appendTo(app.$navBar);
+  },
 
   'renderMap' : function () {
     app.map = new google.maps.Map(d3.select("#map").node(), {

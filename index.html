@@ -5,13 +5,38 @@
     <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" src="script.js"></script>
-    <link rel="stylesheet" href="css/flat-ui.css">
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/flat-ui/2.0/js/flatui-checkbox.js"></script>
+    <link rel="stylesheet" href="http://cdn.jsdelivr.net/flat-ui/2.0/css/flat-ui.css">
     <link rel="stylesheet" href="css/main.css">
     <title>Penn Crime 2013-2014</title>
   </head>
   <body>
     <div id="map"></div>
     <div id="navBar">
+
+      <div class="filter">
+        <label class="checkbox" for="checkbox-theft">
+          <span class="icons">
+            <span class="first-icon fui-checkbox-unchecked"></span>
+            <span class="second-icon fui-checkbox-checked"></span>
+          </span>
+          <input type="checkbox" value id="checkbox-theft" data-toggle="checkbox">
+          Theft
+        </label>
+      </div>
+
+      <div class="filter">
+        <label class="checkbox" for="checkbox-assault">
+          <span class="icons">
+            <span class="first-icon fui-checkbox-unchecked"></span>
+            <span class="second-icon fui-checkbox-checked"></span>
+          </span>
+          <input type="checkbox" value id="checkbox-assault" data-toggle="checkbox">
+          Assault
+        </label>
+      </div>
+
+      <!--
       <div class="viewAll btn btn-block btn-lg btn-danger">All</div>
       <div class="viewTheft btn btn-block btn-lg btn-danger">Theft</div>
       <div class="viewAssault btn btn-block btn-lg btn-danger">Assault</div>
@@ -23,6 +48,7 @@
       <div class="viewDrunkenness btn btn-block btn-lg btn-danger">Drunkenness</div>
       <div class="viewHarassment btn btn-block btn-lg btn-danger">Harassment</div>
       <div class="viewVandalism btn btn-block btn-lg btn-danger">Vandalism</div>
+      -->
     </div>
     <small>
       <div class="info">
