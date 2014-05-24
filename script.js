@@ -10,16 +10,17 @@ var app = {
     app.selectedTypes = ['Theft', 'Assault'];
 
     $(':checkbox').on('toggle', function () {
-      console.log($(this).attr('id'));
+      // console.log($(this).attr('id'));
       var toggledType = $(this).attr('id').split("-")[1];
-      console.log(app.selectedTypes);
+      // console.log(app.selectedTypes);
       var tempIndex = app.selectedTypes.indexOf(toggledType);
       if (tempIndex > -1) {
         app.selectedTypes.splice(tempIndex, 1);
       } else {
         app.selectedTypes.push(toggledType);
       }
-      console.log(app.selectedTypes);
+      // console.log(app.selectedTypes);
+      app.renderType();
     });
 
     /*
@@ -30,11 +31,11 @@ var app = {
         app.renderType(type);
       });
     });
-    */
 
     $('.viewAll').click(function () {
       app.renderType();
     });
+    */
 
     app.renderMap();
   },
@@ -47,10 +48,6 @@ var app = {
   ],
 
   // DUI, Liquor Law, Other Offense, Traffic, Sex Offense
-
-  'getSelectedTypes' : function (type) {
-    console.log('checked', $('.checked').length);
-  },
 
   'generateNavBar' : function (type) {
     app.$navItem = $('<div>')
@@ -99,17 +96,22 @@ var app = {
     app.renderType();
   },
 
-  'renderType' : function (type) {
+  'renderType' : function () {
 
     d3.json("output.json", function(data) {
       // console.log(data);
 
       // filtering 
-      if (type !== undefined) {
+      // if (type !== undefined) {
         data = data.filter(function (d) {
-          return d.type.trim().indexOf(type) > -1;
+          for (var i = 0; i < app.selectedTypes.length; i++) {
+            var type = app.selectedTypes[i];
+            if (d.type.trim().indexOf(type) > -1) return true;
+          };
+          return false;
+          // return d.type.trim().indexOf(type) > -1;
         });
-      }
+      // }
 
       var overlay = new google.maps.OverlayView();
       overlay.onAdd = function() {
