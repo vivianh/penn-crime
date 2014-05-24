@@ -2,14 +2,35 @@ var app = {
 
   'init' : function () {
     app.$navBar = $('#navBar');
-    app.generateNavBar('yo');
 
+    // app.generateNavBar('yo');
+
+    // initialize with all types
+    // app.selectedTypes = app.types;
+    app.selectedTypes = ['Theft', 'Assault'];
+
+    $(':checkbox').on('toggle', function () {
+      console.log($(this).attr('id'));
+      var toggledType = $(this).attr('id').split("-")[1];
+      console.log(app.selectedTypes);
+      var tempIndex = app.selectedTypes.indexOf(toggledType);
+      if (tempIndex > -1) {
+        app.selectedTypes.splice(tempIndex, 1);
+      } else {
+        app.selectedTypes.push(toggledType);
+      }
+      console.log(app.selectedTypes);
+    });
+
+    /*
     app.types.forEach(function (type) {
       var $button = $('.view' + type);
       $button.click(function () {
+        // console.log($('.checkbox.checked').length);
         app.renderType(type);
       });
     });
+    */
 
     $('.viewAll').click(function () {
       app.renderType();
@@ -26,6 +47,10 @@ var app = {
   ],
 
   // DUI, Liquor Law, Other Offense, Traffic, Sex Offense
+
+  'getSelectedTypes' : function (type) {
+    console.log('checked', $('.checked').length);
+  },
 
   'generateNavBar' : function (type) {
     app.$navItem = $('<div>')
