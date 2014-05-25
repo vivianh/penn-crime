@@ -5,7 +5,6 @@ var app = {
 
     // initialize app with all types selected
     app.selectedTypes = app.types.slice(0);
-    console.log(app.selectedTypes);
 
     app.types.forEach(function (type) {
       app.generateNavBar(type);
@@ -13,35 +12,15 @@ var app = {
 
     $(':checkbox').on('toggle', function () {
       var toggledType = $(this).attr('id').split("-")[1];
-      console.log('click!', toggledType);
       var tempIndex = app.selectedTypes.indexOf(toggledType);
+
       if (tempIndex > -1) {
         app.selectedTypes.splice(tempIndex, 1);
-        console.log('splice');
       } else {
         app.selectedTypes.push(toggledType);
-        console.log('push');
       }
-      // console.log('toggle', app.selectedTypes);
+
       app.renderType();
-    });
-
-    $('.checkAll').click(function () {
-      app.types.forEach(function (type) {
-        if (app.selectedTypes.indexOf(type) === -1) {
-          // $(':checkbox#checkbox-' + type).checkbox('toggle');
-          $(':checkbox#checkbox-' + type).checkbox('check');
-        }
-      });
-    });
-
-    $('.clearAll').click(function () {
-      console.log(app.selectedTypes);
-      app.selectedTypes.forEach(function (type) {
-        console.log(type);
-        $(':checkbox#checkbox-' + type).checkbox('toggle');
-        // $(':checkbox#checkbox-' + type).checkbox('uncheck');
-      });
     });
 
     app.renderMap();
