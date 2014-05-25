@@ -3,43 +3,51 @@ var app = {
   'init' : function () {
     app.$navBar = $('#navBar');
 
-    // app.generateNavBar('yo');
+    // initialize app with all types selected
+    app.selectedTypes = app.types.slice(0);
+    console.log(app.selectedTypes);
 
-    // initialize with all types
-    // app.selectedTypes = app.types;
-    app.selectedTypes = ['Theft', 'Assault'];
+    app.types.forEach(function (type) {
+      app.generateNavBar(type);
+    });
 
     $(':checkbox').on('toggle', function () {
-      // console.log($(this).attr('id'));
       var toggledType = $(this).attr('id').split("-")[1];
-      // console.log(app.selectedTypes);
+      console.log('click!', toggledType);
       var tempIndex = app.selectedTypes.indexOf(toggledType);
       if (tempIndex > -1) {
         app.selectedTypes.splice(tempIndex, 1);
+        console.log('splice');
       } else {
         app.selectedTypes.push(toggledType);
+        console.log('push');
       }
-      // console.log(app.selectedTypes);
+      // console.log('toggle', app.selectedTypes);
       app.renderType();
     });
 
-    /*
-    app.types.forEach(function (type) {
-      var $button = $('.view' + type);
-      $button.click(function () {
-        // console.log($('.checkbox.checked').length);
-        app.renderType(type);
+    $('.checkAll').click(function () {
+      app.types.forEach(function (type) {
+        if (app.selectedTypes.indexOf(type) === -1) {
+          // $(':checkbox#checkbox-' + type).checkbox('toggle');
+          $(':checkbox#checkbox-' + type).checkbox('check');
+        }
       });
     });
 
-    $('.viewAll').click(function () {
-      app.renderType();
+    $('.clearAll').click(function () {
+      console.log(app.selectedTypes);
+      app.selectedTypes.forEach(function (type) {
+        console.log(type);
+        $(':checkbox#checkbox-' + type).checkbox('toggle');
+        // $(':checkbox#checkbox-' + type).checkbox('uncheck');
+      });
     });
-    */
 
     app.renderMap();
   },
 
+  // other: DUI, Liquor Law, Other Offense, Traffic, Sex Offense
   'types' : [
     'Theft', 'Assault', 'Robbery', 'Rape',
     'Fraud', 'Burglary', 'Aggravated Assault',
@@ -47,37 +55,18 @@ var app = {
     'Vandalism', 'Harassment',
   ],
 
-  // DUI, Liquor Law, Other Offense, Traffic, Sex Offense
-
   'generateNavBar' : function (type) {
     app.$navItem = $('<div>')
       .attr('class', 'filter');
 
     app.$itemLabel = $('<label>')
       .attr('class', 'checkbox')
-      .attr('for', 'checkbox-' + type)
       .text(type);
-
-    /*
-    app.$icons = $('<span>')
-      .attr('class', 'icons');
-
-    app.$firstIcon = $('<span>')
-      .attr('class', 'first-icon')
-      .attr('class', 'fui-checkbox-unchecked')
-      .appendTo(app.$icons);
-
-    app.$secondIcon = $('<span>')
-      .attr('class', 'second-icon')
-      .attr('class', 'fui-checkbox-checked')
-      .appendTo(app.$icons);
-
-    app.$icons.appendTo(app.$itemLabel);
-    */
 
     app.$inputItem = $('<input>')
       .attr('type', 'checkbox')
       .attr('id', 'checkbox-' + type)
+      .attr('checked', 'checked')
       .attr('data-toggle', 'checkbox')
       .appendTo(app.$itemLabel);
 
@@ -102,16 +91,13 @@ var app = {
       // console.log(data);
 
       // filtering 
-      // if (type !== undefined) {
-        data = data.filter(function (d) {
-          for (var i = 0; i < app.selectedTypes.length; i++) {
-            var type = app.selectedTypes[i];
-            if (d.type.trim().indexOf(type) > -1) return true;
-          };
-          return false;
-          // return d.type.trim().indexOf(type) > -1;
-        });
-      // }
+      data = data.filter(function (d) {
+        for (var i = 0; i < app.selectedTypes.length; i++) {
+          var type = app.selectedTypes[i];
+          if (d.type.trim().indexOf(type) > -1) return true;
+        };
+        return false;
+      });
 
       var overlay = new google.maps.OverlayView();
       overlay.onAdd = function() {
